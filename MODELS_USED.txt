@@ -1,0 +1,56 @@
+MODELS CURRENTLY USED IN THE CODE:
+====================================
+
+STEP 1: Generate Baby Face from Parent Photos
+----------------------------------------------
+Using codeplugtech face-swap for blending:
+
+1. codeplugtech/face-swap:278a81e7ebb22db98bcba54de985d22cc1abeead2754eb1f2af717247be69b34
+   ✅ SPECIFIC VERSION - Stable face swap model
+
+Input parameters (tries these variations):
+- source_image / target_image (both parent orders)
+- swap_image / target_image
+- Optional prompt/width/height
+
+
+STEP 2: Attach Face to Full Baby Body
+--------------------------------------
+If reference_body_path is provided:
+- cdingram/face-swap:latest (primary)
+- codeplugtech/face-swap:latest (fallback)
+- easel/advanced-face-swap:latest (fallback)
+
+If no reference body (default):
+- black-forest-labs/flux-schnell
+
+Input parameters for flux-schnell:
+- prompt: body description + face guide text
+- image: baby_face.jpg
+- num_outputs: 1
+- width: 1024
+- height: 1024
+
+
+STEP 3: Convert to 3D Model
+----------------------------
+- Meshy Pro API (not a Replicate model)
+- Endpoint: https://api.meshy.ai/v2/image-to-3d
+- Method: POST with image file + prompt
+
+
+CHECK THESE ON REPLICATE:
+=========================
+Visit: https://replicate.com/
+
+1. Search: "cdingram/face-swap" ✅ VERIFIED - 1M runs
+2. Search: "codeplugtech/face-swap" ✅ VERIFIED - 748k runs
+3. Search: "easel/advanced-face-swap" ✅ VERIFIED - 75k runs
+4. Search: "scamai/faceswap" ✅ VERIFIED - recently updated
+5. Search: "black-forest-labs/flux-schnell"
+
+All models above are verified to exist and be publicly available.
+Make sure:
+- You have access/permission to use them
+- Check their input/output parameters match what we're using
+

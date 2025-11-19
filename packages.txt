@@ -1,0 +1,5 @@
+# System packages (optional - only if needed)
+# Streamlit Cloud uses Ubuntu, so you can specify system packages here if needed
+# Example: ffmpeg, imagemagick, etc.
+# Leave empty if not needed
+
