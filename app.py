@@ -47,7 +47,7 @@ def main():
             key="parent1"
         )
         if parent1_file:
-            st.image(parent1_file, use_container_width=True, caption="Parent 1")
+            st.image(parent1_file, width='stretch', caption="Parent 1")
     
     with col2:
         st.subheader("📸 Parent 2 Photo")
@@ -57,13 +57,13 @@ def main():
             key="parent2"
         )
         if parent2_file:
-            st.image(parent2_file, use_container_width=True, caption="Parent 2")
+            st.image(parent2_file, width='stretch', caption="Parent 2")
     
     st.markdown("---")
     
     # Generate button
     if parent1_file and parent2_file:
-        if st.button("🚀 Generate 3D Baby Model", type="primary", use_container_width=True):
+        if st.button("🚀 Generate 3D Baby Model", type="primary"):
             # Create temporary files
             temp_dir = Path("temp")
             temp_dir.mkdir(exist_ok=True)
@@ -136,7 +136,7 @@ def main():
                 with result_col1:
                     st.subheader("👶 Baby Face")
                     if os.path.exists(baby_face_path):
-                        st.image(baby_face_path, use_container_width=True)
+                        st.image(baby_face_path, width='stretch')
                         with open(baby_face_path, "rb") as f:
                             st.download_button(
                                 "📥 Download Baby Face",
@@ -148,7 +148,7 @@ def main():
                 with result_col2:
                     st.subheader("👶 Full Baby")
                     if os.path.exists(full_baby_path):
-                        st.image(full_baby_path, use_container_width=True)
+                        st.image(full_baby_path, width='stretch')
                         with open(full_baby_path, "rb") as f:
                             st.download_button(
                                 "📥 Download Full Baby",
