@@ -305,6 +305,82 @@ class CyberBabyGenerator:
         print(f"   ✅ File converted to base64 data URL ({file_size_kb:.1f}KB)")
         return data_url
     
+    def _upload_file_to_cloudinary(self, file_path: str) -> str:
+        """
+        Upload file to Cloudinary using signed upload (API key + secret).
+        Returns secure HTTPS URL for the uploaded image.
+        """
+        import base64
+        import hashlib
+        import hmac
+        
+        # Read file content
+        with open(file_path, "rb") as f:
+            file_content = f.read()
+        
+        file_name = os.path.basename(file_path)
+        
+        # Determine content type
+        ext = os.path.splitext(file_name)[1].lower()
+        content_types = {
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
+            ".png": "image/png",
+            ".gif": "image/gif",
+            ".webp": "image/webp",
+        }
+        content_type = content_types.get(ext, "image/jpeg")
+        
+        # Get Cloudinary credentials from environment or use defaults
+        cloud_name = os.getenv("CLOUDINARY_CLOUD_NAME", "dflltuera")
+        api_key = os.getenv("CLOUDINARY_API_KEY", "853123163334271")
+        api_secret = os.getenv("CLOUDINARY_API_SECRET", "2__H3mr3JHHMJdrm5m8a5G7WJ98")
+        upload_folder = os.getenv("CLOUDINARY_UPLOAD_FOLDER", "cyberbaby")
+        
+        # Build Cloudinary upload URL
+        upload_url = f"https://api.cloudinary.com/v1_1/{cloud_name}/image/upload"
+        
+        # Prepare upload parameters
+        timestamp = int(time.time())
+        
+        # Create signature for signed upload
+        params = {
+            "timestamp": timestamp,
+            "folder": upload_folder,
+        }
+        
+        # Create signature string (must be sorted by key)
+        params_string = "&".join([f"{k}={v}" for k, v in sorted(params.items())])
+        signature_string = f"{params_string}{api_secret}"
+        signature = hashlib.sha1(signature_string.encode()).hexdigest()
+        
+        # Prepare multipart form data
+        files = {
+            "file": (file_name, file_content, content_type)
+        }
+        
+        data = {
+            "api_key": api_key,
+            "timestamp": timestamp,
+            "signature": signature,
+            "folder": upload_folder,
+        }
+        
+        # Upload to Cloudinary
+        response = requests.post(upload_url, files=files, data=data, timeout=60)
+        response.raise_for_status()
+        
+        result = response.json()
+        secure_url = result.get("secure_url") or result.get("url")
+        
+        if not secure_url:
+            raise Exception(f"Cloudinary upload succeeded but no URL returned: {result}")
+        
+        file_size_kb = len(file_content) / 1024
+        print(f"   ✅ File uploaded to Cloudinary ({file_size_kb:.1f}KB): {secure_url[:50]}...")
+        
+        return secure_url
+    
     def _run_replicate_model_with_version(self, model_name: str, version_id: str, input_data: dict) -> str:
         """
         Run model with specific version ID
